@@ -6,9 +6,10 @@
 
 // Paramters used for the simulation
 const double EvaporationFactor = 0.6;
-const double alpha = 3, beta = 6.5;
+const double alpha = 3, beta= 6;
 const double Q = 15;
 const double DefualtPheremone = 0.5;
+const int NumberOfIterations = 50;
 
 class SquareMatrix {
 	// Matrix maintains the symmetric property.
@@ -37,15 +38,9 @@ private:
 	std::vector<double> buffer;
 };
 
-struct AcoParamters {
-	double beta;
-	double evaporationFactor;
-	int NumberOfIterations;
-};
-
 class Ant {
 public:
-	Ant(Graph* g, AcoParamters* ap, int id);
+	Ant(Graph* g,  int id);
 	Ant();
 
 	void reset();
@@ -65,7 +60,6 @@ private:
 	double computeVisitProbability(SquareMatrix& pheremones, std::set<int>& allowed, int city);
 	std::set<int> getNeighbours(int node);
 
-	AcoParamters* paramters;
 	std::vector<int> tour;
 	std::set<int> visited; // used for quick lookup time
 

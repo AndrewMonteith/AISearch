@@ -1,10 +1,9 @@
 #include "Aco.H"
 
-Ant::Ant(Graph* g, AcoParamters* params, int id) 
+Ant::Ant(Graph* g, int id) 
 {
 	this->id = id;
 	this->graph = g;
-	this->paramters = params;
 	
 	tour = std::vector<int>(g->getNumberOfCities());
 	visited = std::set<int>();
@@ -143,4 +142,4 @@ void Ant::reset() {
 }
 
 Ant::Ant()
-	: graph(nullptr), paramters(nullptr) {}
+	: graph(nullptr) {}

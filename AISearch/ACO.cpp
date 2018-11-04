@@ -1,12 +1,12 @@
 #include "Aco.H"
 
-std::vector<Ant> createAnts(int number, Graph* g, AcoParamters* paramters) {
+std::vector<Ant> createAnts(int number, Graph* g) {
 	number = std::max(0, std::min(number, 200));
 
 	std::vector<Ant> ants(number);
 
 	for (auto i = 0; i < number; i++) {
-		ants[i] = (Ant(g, paramters, i));
+		ants[i] = Ant(g, i);
 	}
 
 	return ants;
@@ -76,34 +76,14 @@ std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix&
 	return *bestTour;
 }
 
-AcoParamters createParamters() {
-	std::random_device rnd;
-
-	std::mt19937 gen(rnd());
-
-	std::uniform_real_distribution<> evaporationFactorDis(0.4, 0.6);
-	std::uniform_real_distribution<> betaDis(6, 9);
-	std::uniform_int_distribution<> numberDis(50, 90);
-
-	AcoParamters paramters;
-
-	paramters.beta = betaDis(gen);
-	paramters.evaporationFactor = 0.6; // evaporationFactorDis(gen);
-	paramters.NumberOfIterations = numberDis(gen);
-
-	return paramters;
-}
-
 std::vector<int> ACO::solve(Graph* g) {
-	auto paramters = createParamters();
-
-	auto ants = createAnts(NumberOfAnts, g, &paramters);
+	auto ants = createAnts(NumberOfAnts, g);
 
 	auto pheremoneMatrix = createPheremoneMatrix(g);
 
 	Timer t;
 
-	for (auto i = 0; i < paramters.NumberOfIterations; i++) {
+	for (auto i = 0; i < NumberOfIterations; i++) {
 		t.reset();
 		resetAnts(ants);
 		walkAnts(ants, pheremoneMatrix);
