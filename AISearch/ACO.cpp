@@ -1,15 +1,12 @@
 #include "Aco.H"
 
-#include <map>
-
-
 std::vector<Ant> createAnts(int number, Graph* g, AcoParamters* paramters) {
 	number = std::max(0, std::min(number, 200));
 
 	std::vector<Ant> ants(number);
 
 	for (auto i = 0; i < number; i++) {
-		ants[i] = (Ant(g, paramters));
+		ants[i] = (Ant(g, paramters, i));
 	}
 
 	return ants;
@@ -75,8 +72,6 @@ std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix&
 			bestTour = ant.getTour();
 		}
 	}
-
-	std::cout << bestLength << ":";
 
 	return *bestTour;
 }

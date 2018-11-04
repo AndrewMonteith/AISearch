@@ -1,14 +1,11 @@
 #include "Aco.H"
 
-Ant::Ant(Graph* g, AcoParamters* params) 
+Ant::Ant(Graph* g, AcoParamters* params, int id) 
 {
+	this->id = id;
 	this->graph = g;
 	this->paramters = params;
-	// Assign ant unique id
-	static int ID = 0;
-	id = ID;
-	++ID;
-
+	
 	tour = std::vector<int>(g->getNumberOfCities());
 	visited = std::set<int>();
 

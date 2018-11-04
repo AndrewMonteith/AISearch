@@ -2,20 +2,19 @@
 
 #include "TourSolver.h"
 
-typedef std::vector<int> State;
+typedef std::vector<int> Tour;
 
 class SuccessorGenerator
 {
 public:
+	
 	SuccessorGenerator();
 	SuccessorGenerator(Graph* g);
 	~SuccessorGenerator();
 
-	virtual void createSuccessor(State& s) = 0; // generate a new successor
-	virtual void acceptSuccessor(State& s) = 0; // accept the successor.
-	virtual void undo(State& s) = 0; // Optimisation wise we need to make all successors transformablew
-private:
-	Graph* g;
+	virtual void createSuccessor(Tour& s) = 0; // generate a new successor
+	virtual void acceptSuccessor(Tour& s) = 0; // accept the successor.
+	virtual void undo(Tour& s) = 0; // Optimisation wise we need to make all successors transformablew
 };
 
 class Annealing // : public TourSolver
@@ -45,9 +44,9 @@ class Swapper : public SuccessorGenerator {
 public:
 	Swapper(Graph* g);
 
-	void createSuccessor(State& s);
-	void undo(State& s);
-	void acceptSuccessor(State& s);
+	void createSuccessor(Tour& s);
+	void undo(Tour& s);
+	void acceptSuccessor(Tour& s);
 private:
 	int from = 0, to = 0;
 	std::uniform_int_distribution<> indiciesDis;
@@ -57,11 +56,11 @@ private:
 class ReverseSubsection : public SuccessorGenerator {
 public:
 	ReverseSubsection(Graph* g);
-	void createSuccessor(State& s);
-	void undo(State& s);
-	void acceptSuccessor(State& s);
+	void createSuccessor(Tour& s);
+	void undo(Tour& s);
+	void acceptSuccessor(Tour& s);
 private:
-	State::iterator from, to; // 2 iterators that we reveresed inbetween
+	Tour::iterator from, to; // 2 iterators that we reveresed inbetween
 	std::uniform_int_distribution<> indiciesDis;
 	std::mt19937 rnd;
 };

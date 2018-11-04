@@ -54,39 +54,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="ExampleTour.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour012.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour017.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour021.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour026.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour042.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour048.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour058.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour175.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour180.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-    <Text Include="Tour535.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
 </Project>

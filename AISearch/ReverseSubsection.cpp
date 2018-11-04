@@ -3,7 +3,6 @@
 #include <algorithm>
 
 ReverseSubsection::ReverseSubsection(Graph* g)
-	: SuccessorGenerator(g)
 {
 	std::random_device seed;
 
@@ -12,11 +11,11 @@ ReverseSubsection::ReverseSubsection(Graph* g)
 }
 
 
-void ReverseSubsection::acceptSuccessor(State& s) {
+void ReverseSubsection::acceptSuccessor(Tour& s) {
 	std::reverse(from, to);
 }
 
-void ReverseSubsection::createSuccessor(State& s) {
+void ReverseSubsection::createSuccessor(Tour& s) {
 	int rndIndex1 = indiciesDis(rnd);
 	int rndIndex2 = indiciesDis(rnd);
 
@@ -26,6 +25,6 @@ void ReverseSubsection::createSuccessor(State& s) {
 	std::reverse(from, to);
 }
 
-void ReverseSubsection::undo(State& s) {
+void ReverseSubsection::undo(Tour& s) {
 	std::reverse(from, to);
 }

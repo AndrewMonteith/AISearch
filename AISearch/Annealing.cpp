@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-State createInitalState(int numberOfNodes) {
+Tour createInitalState(int numberOfNodes) {
 	std::vector<int> numbers(numberOfNodes);
 
 	// Fill vector with numbers from 1 to number of cities.
@@ -28,8 +28,8 @@ inline double acceptanceProbability(int currentEnergy, int newEnergy, double tem
 
 std::vector<int> Annealing::solve(Graph* g) {
 	// Allocate 2 vectors to act as current and successor
-	State current = createInitalState(g->getNumberOfCities());
-	State next = current; // Copy
+	Tour current = createInitalState(g->getNumberOfCities());
+	Tour next = current; // Copy
 	
 	double temperature = startingTemperature; 
 	while (temperature > 0.01) { // magic value but tends to work.
@@ -72,10 +72,7 @@ Annealing::~Annealing()
 {
 }
 
-SuccessorGenerator::SuccessorGenerator()
-	:g(nullptr) {}
+SuccessorGenerator::SuccessorGenerator() {}
 
-SuccessorGenerator::SuccessorGenerator(Graph* g) 
-	:g(g) {}
 
 SuccessorGenerator::~SuccessorGenerator() {}
