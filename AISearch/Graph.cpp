@@ -8,7 +8,7 @@ typedef std::string::const_iterator str_iter;
 typedef std::function<bool(char)> char_predicate;
 
 inline int flattenCity(int c1, int c2, int numberOfCities) {
-	return (c1 - 1)*numberOfCities + (c2 - 2);
+	return c2*numberOfCities + c1;
 }
 
 Graph::Graph(std::string name, int numberOfCities, std::vector<int> weights) 
@@ -24,7 +24,7 @@ int Graph::getNumberOfCities() {
 
 // Distance Between City c1 and c2
 int Graph::getWeight(int c1, int c2) const {
-	return c1==c2 ? 0 : weights[flattenCity(c1, c2, numberOfCities)];
+	return weights[flattenCity(c1, c2, numberOfCities)];
 }
 
 int Graph::getCostOfTour(const std::vector<int>& tour) {
@@ -101,14 +101,17 @@ Graph Graph::LoadFromFile(const std::string fileName) {
 		// Going to store it in one big contiguos memory block
 		std::vector<int> cityDistances = std::vector<int>(numberOfCities*numberOfCities);
 
-		for (auto i = 1; i <= numberOfCities; i++) {
-			for (auto j = i + 1; j <= numberOfCities; j++) {
+		for (auto i = 0; i < numberOfCities; i++) {
+			for (auto j = i + 1; j < numberOfCities; j++) {
 				auto dist = std::stoi(readDelimiteredItem(it, end, isdigit));
 
 				cityDistances[flattenCity(i, j, numberOfCities)] = dist;
 				cityDistances[flattenCity(j, i, numberOfCities)] = dist;
 			}
 		}
+
+		for (auto i = 0; i < numberOfCities; i++)
+			cityDistances[flattenCity(i, i, numberOfCities)] = 0;
 
 		return Graph(name, numberOfCities, cityDistances);
 	}

@@ -7,11 +7,6 @@ typedef std::vector<int> Tour;
 class SuccessorGenerator
 {
 public:
-	
-	SuccessorGenerator();
-	SuccessorGenerator(Graph* g);
-	~SuccessorGenerator();
-
 	virtual void createSuccessor(Tour& s) = 0; // generate a new successor
 	virtual void acceptSuccessor(Tour& s) = 0; // accept the successor.
 	virtual void undo(Tour& s) = 0; // Optimisation wise we need to make all successors transformablew

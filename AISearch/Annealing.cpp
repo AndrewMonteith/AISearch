@@ -71,8 +71,3 @@ Annealing::Annealing(double alpha, double startingTemp)
 Annealing::~Annealing()
 {
 }
-
-SuccessorGenerator::SuccessorGenerator() {}
-
-
-SuccessorGenerator::~SuccessorGenerator() {}

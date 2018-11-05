@@ -6,6 +6,7 @@ Ant::Ant(Graph* g, int id)
 	this->graph = g;
 	
 	tour = std::vector<int>(g->getNumberOfCities());
+	std::fill(tour.begin(), tour.end(), -1);
 	visited = std::set<int>();
 
 	numOfVisitedCities = 0;
@@ -19,10 +20,10 @@ Ant::Ant(Graph* g, int id)
 
 void Ant::walk(SquareMatrix& pheremones) {
 	// Generate Random Start Tour.
-	auto rndTourStart = std::uniform_int_distribution<>(1, graph->getNumberOfCities());
+	auto rndTourStart = std::uniform_int_distribution<>(0, graph->getNumberOfCities()-1);
 	visit(rndTourStart(gen));
 
-	while (numOfVisitedCities < graph->getNumberOfCities()) {
+	while (tour.back() == -1) {
 		visit(chooseNeighbour(pheremones));
 	}
 }
@@ -30,15 +31,15 @@ void Ant::walk(SquareMatrix& pheremones) {
 int Ant::chooseNeighbour(SquareMatrix& pheremones) {
 	double q = dis(gen);
 
-	if (q <= 0.2) {
+	if (q <= 0.3) {
 		// Determinstically vist the city with the greatest pheremone from current city
 		return cityWithLargestPheremone(pheremones);
 	}
 
 	double p = dis(gen);
-	auto neighbours = getNeighbours(getCurrentNode());
+	auto neighbours = getNeighbours(pheremones, getCurrentNode());
 
-	for (auto neighbour : neighbours) {
+	for (int neighbour : neighbours) {
 		p -= computeVisitProbability(pheremones, neighbours, neighbour);
 
 		if (p < 0) {
@@ -46,7 +47,11 @@ int Ant::chooseNeighbour(SquareMatrix& pheremones) {
 		}
 	}
 
-	throw std::exception("failed to find neighbour");
+
+
+	return cityWithLargestPheremone(pheremones);
+
+	// throw std::exception("failed to find neighbour");
 }
 
 bool Ant::walkedEdge(int c1, int c2) {
@@ -71,18 +76,22 @@ int Ant::getId() {
 	return id;
 }
 
-inline double pheremoneTerm(SquareMatrix& pheremones, int c1, int c2) {
-	return pow(pheremones.get(c1, c2), alpha);
+inline Pheremone pheremoneTerm(SquareMatrix& pheremones, int c1, int c2) {
+	auto pher = pheremones.get(c1, c2);
+
+	return pher * pher*pher;
+	// return pow(pheremones.get(c1, c2), alpha);
 }
 
-const double one = 1;
+inline Pheremone distanceTerm(Graph* g, int c1, int c2) {
+	auto weightTerm = static_cast<Pheremone>(1) / g->getWeight(c1, c2);
 
-inline double distanceTerm(Graph* g, int c1, int c2) {
-	return pow(one / g->getWeight(c1, c2), beta);
+	 return weightTerm * weightTerm*weightTerm*weightTerm*weightTerm*weightTerm;
+	// return pow(static_cast<Pheremone>(1) / g->getWeight(c1, c2), beta);
 }
 
-double Ant::computeVisitProbability(SquareMatrix& pheremones, std::set<int>& allowed, int proposed) {
-	double normalisation = 0;
+Pheremone Ant::computeVisitProbability(SquareMatrix& pheremones, std::vector<int>& allowed, int proposed) {
+	Pheremone normalisation = 0;
 	auto current = getCurrentNode();
 
 	for (auto allowedNode : allowed) {
@@ -97,12 +106,15 @@ double Ant::computeVisitProbability(SquareMatrix& pheremones, std::set<int>& all
 	return (phTerm * distTerm) / normalisation;
 }
 
-std::set<int> Ant::getNeighbours(int node) {
-	std::set<int> neighbours;
+#include <iostream>
 
-	for (auto city = 1; city <= graph->getNumberOfCities(); city++) {
-		if (visited.find(city) == visited.end()) {
-			neighbours.insert(city);
+std::vector<int> Ant::getNeighbours(SquareMatrix& pheremones, int node) {
+	std::vector<int> neighbours;
+	auto currentCity = getCurrentNode();
+
+	for (auto city = 0; city < graph->getNumberOfCities(); city++) {
+		if (visited.find(city) == visited.end() && pheremones.get(currentCity, city) > 0.001) {
+			neighbours.push_back(city);
 		}
 	}
 
@@ -110,18 +122,29 @@ std::set<int> Ant::getNeighbours(int node) {
 }
 
 int Ant::cityWithLargestPheremone(SquareMatrix& pheremones) {
-	int bestCity = 0;
+	int bestCity = -1;
 	double largestPheremone = -1;
 
 	auto currentCity = getCurrentNode();
+	auto neighbours = getNeighbours(pheremones, currentCity);
 
-	for (int city : getNeighbours(currentCity)) {
+	for (int city : neighbours) {
 		auto pheremone = pheremones.get(currentCity, city);
-		if (pheremone >= largestPheremone) {
+		if (pheremone >= largestPheremone) { // Actually wanna walk down it
 			largestPheremone = pheremone;
 			bestCity = city;
 		}
 	}
+	
+	if (bestCity == -1) {
+		// Determinstically pick a city with no lower bound
+		for (auto city = 0; city < graph->getNumberOfCities(); city++) {
+			if (visited.find(city) == visited.end()) {
+				return city;
+			}
+		}
+	}
+	
 
 	return bestCity;
 }
@@ -132,12 +155,14 @@ int Ant::getCurrentNode() {
 
 void Ant::visit(int city) {
 	tour[numOfVisitedCities] = city;
-	visited.insert(city);
+ 	visited.insert(city);
+	
 	numOfVisitedCities++;
 }
 
 void Ant::reset() {
 	numOfVisitedCities = 0;
+	tour[tour.size() - 1] = -1;
 	visited.clear();
 }
 
