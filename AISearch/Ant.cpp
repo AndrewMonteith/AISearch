@@ -29,7 +29,7 @@ void Ant::walk(SquareMatrix& pheremones) {
 }
 
 int Ant::chooseNeighbour(SquareMatrix& pheremones) {
-	double q = dis(gen);
+	float q = dis(gen);
 
 	if (q <= 0.3) {
 		// Determinstically vist the city with the greatest pheremone from current city
@@ -114,7 +114,7 @@ std::vector<int> Ant::getNeighbours(SquareMatrix& pheremones, int node) {
 
 	for (auto city = 0; city < graph->getNumberOfCities(); city++) {
 		if (visited.find(city) == visited.end() && pheremones.get(currentCity, city) > 0.001) {
-			neighbours.push_back(city);
+			neighbours.emplace_back(city);
 		}
 	}
 
@@ -123,7 +123,7 @@ std::vector<int> Ant::getNeighbours(SquareMatrix& pheremones, int node) {
 
 int Ant::cityWithLargestPheremone(SquareMatrix& pheremones) {
 	int bestCity = -1;
-	double largestPheremone = -1;
+	Pheremone largestPheremone = -1;
 
 	auto currentCity = getCurrentNode();
 	auto neighbours = getNeighbours(pheremones, currentCity);

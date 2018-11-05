@@ -19,7 +19,7 @@ public:
 	SquareMatrix(int dimension, Pheremone defaultValue = 0)
 	{
 		this->dimension = dimension;
-		buffer = std::vector<double>(dimension*dimension, defaultValue);
+		buffer = std::vector<Pheremone>(dimension*dimension, defaultValue);
 	}
 	
 	Pheremone get(int x, int y) {
@@ -41,6 +41,7 @@ public:
 
 	void update(int x, int y, Pheremone update) {
 		buffer[flatten(x, y)] += update;
+		buffer[flatten(y, x)] += update;
 	}
 
 private:

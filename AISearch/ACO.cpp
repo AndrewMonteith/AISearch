@@ -3,10 +3,11 @@
 std::vector<Ant> createAnts(int number, Graph* g) {
 	number = std::max(0, std::min(number, 200));
 
-	std::vector<Ant> ants(number);
+	std::vector<Ant> ants;
+	ants.reserve(number);
 
 	for (auto i = 0; i < number; i++) {
-		ants[i] = Ant(g, i);
+		ants.emplace_back(g, i);
 	}
 
 	return ants;
@@ -22,25 +23,26 @@ SquareMatrix createPheremoneMatrix(Graph* g) {
 }
 
 void walkAnts(std::vector<Ant>& ants, SquareMatrix& matrix) {
-	for (Ant& ant : ants) {
+	for (auto& ant : ants) {
 		ant.walk(matrix);
 	}
 }
 
 void resetAnts(std::vector<Ant>& ants) {
-	for (Ant& ant : ants) {
+	for (auto& ant : ants) {
 		ant.reset();
 	}
 }
 
 void updatePheremones(Graph* g, SquareMatrix& pheremones, std::vector<Ant>& ants) {
-	std::vector<Pheremone> pheremoneUpdates(ants.size());
+	std::vector<Pheremone> pheremoneUpdates;
+	pheremoneUpdates.reserve(ants.size());
 
 	for (Ant& ant : ants) {
 		pheremoneUpdates[ant.getId()] = Q / g->getCostOfTour(*ant.getTour());
 	}
 
-	for (double& d : pheremones.rawBuffer()) {
+	for (auto& d : pheremones.rawBuffer()) {
 		d *= EvaporationFactor;
 	}
 
@@ -63,7 +65,7 @@ std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix&
 	std::vector<int>* bestTour = ants[0].getTour();
 	int bestLength = g->getCostOfTour(*ants[0].getTour()); // ants[0].getTourLength();
 
-	for (Ant& ant : ants) {
+	for (auto& ant : ants) {
 		auto newLength = g->getCostOfTour(*ant.getTour());
 		if (newLength < bestLength) {
 			bestLength = newLength;
@@ -74,7 +76,6 @@ std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix&
 	return *bestTour;
 }
 
-#include <iostream>
 
 std::vector<int> ACO::solve(Graph* g) {
 	auto ants = createAnts(NumberOfAnts, g);
@@ -84,7 +85,6 @@ std::vector<int> ACO::solve(Graph* g) {
 	Timer t;
 
 	for (auto i = 0; i < NumberOfIterations; i++) {
-		std::cout << i << std::endl;
 		t.reset();
 		resetAnts(ants);
 		walkAnts(ants, pheremoneMatrix);
