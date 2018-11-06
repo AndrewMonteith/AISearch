@@ -35,9 +35,8 @@ void resetAnts(std::vector<Ant>& ants) {
 }
 
 void updatePheremones(Graph* g, SquareMatrix& pheremones, std::vector<Ant>& ants) {
-	std::vector<Pheremone> pheremoneUpdates;
-	pheremoneUpdates.reserve(ants.size());
-
+	std::vector<Pheremone> pheremoneUpdates(ants.size());
+	
 	for (Ant& ant : ants) {
 		pheremoneUpdates[ant.getId()] = Q / g->getCostOfTour(*ant.getTour());
 	}
