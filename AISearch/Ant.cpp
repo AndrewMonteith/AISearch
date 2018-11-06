@@ -39,7 +39,7 @@ int Ant::chooseNeighbour(SquareMatrix& pheremones) {
 	double p = dis(gen);
 	auto neighbours = getNeighbours(pheremones, getCurrentNode());
 
-	for (int neighbour : neighbours) {
+	for (auto& neighbour : neighbours) {
 		p -= computeVisitProbability(pheremones, neighbours, neighbour);
 
 		if (p < 0) {
@@ -94,7 +94,7 @@ Pheremone Ant::computeVisitProbability(SquareMatrix& pheremones, std::vector<int
 	Pheremone normalisation = 0;
 	auto current = getCurrentNode();
 
-	for (auto allowedNode : allowed) {
+	for (auto& allowedNode : allowed) {
 		if (allowedNode == proposed) continue;
 
 		normalisation += pheremoneTerm(pheremones, current, allowedNode)*distanceTerm(graph, current, allowedNode);
@@ -128,7 +128,7 @@ int Ant::cityWithLargestPheremone(SquareMatrix& pheremones) {
 	auto currentCity = getCurrentNode();
 	auto neighbours = getNeighbours(pheremones, currentCity);
 
-	for (int city : neighbours) {
+	for (auto& city : neighbours) {
 		auto pheremone = pheremones.get(currentCity, city);
 		if (pheremone >= largestPheremone) { // Actually wanna walk down it
 			largestPheremone = pheremone;
