@@ -121,8 +121,6 @@ Pheremone Ant::computeVisitProbability(SquareMatrix& pheremones, std::vector<int
 	return (phTerm * distTerm) / normalisation;
 }
 
-#include <iostream>
-
 std::vector<int> Ant::getNeighbours(SquareMatrix& pheremones, int node) {
 	std::vector<int> neighbours;
 	auto currentCity = getCurrentNode();
