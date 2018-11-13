@@ -77,18 +77,32 @@ int Ant::getId() {
 	return id;
 }
 
-inline Pheremone pheremoneTerm(SquareMatrix& pheremones, int c1, int c2) {
-	auto pher = pheremones.get(c1, c2);
+Pheremone ipow(Pheremone base, int exp)
+{
+	Pheremone result = 1;
+	for (;;)
+	{
+		if (exp & 1)
+			result *= base;
+		exp >>= 1;
+		if (!exp)
+			break;
+		base *= base;
+	}
 
-	return pher * pher*pher;
-	// return pow(pheremones.get(c1, c2), alpha);
+	return result;
 }
 
-inline Pheremone distanceTerm(Graph* g, int c1, int c2) {
+inline Pheremone pheremoneTerm(SquareMatrix& pheremones, int alpha, int c1, int c2) {
+	auto pher = pheremones.get(c1, c2);
+
+	return ipow(pher, alpha);
+}
+
+inline Pheremone distanceTerm(Graph* g, int beta, int c1, int c2) {
 	auto weightTerm = static_cast<Pheremone>(1) / g->getWeight(c1, c2);
 
-	 return weightTerm * weightTerm*weightTerm*weightTerm*weightTerm*weightTerm;
-	// return pow(static_cast<Pheremone>(1) / g->getWeight(c1, c2), beta);
+	return ipow(weightTerm, beta);
 }
 
 Pheremone Ant::computeVisitProbability(SquareMatrix& pheremones, std::vector<int>& allowed, int proposed) {
@@ -98,11 +112,11 @@ Pheremone Ant::computeVisitProbability(SquareMatrix& pheremones, std::vector<int
 	for (auto& allowedNode : allowed) {
 		if (allowedNode == proposed) continue;
 
-		normalisation += pheremoneTerm(pheremones, current, allowedNode)*distanceTerm(graph, current, allowedNode);
+		normalisation += pheremoneTerm(pheremones, params.Alpha, current, allowedNode)*distanceTerm(graph, params.Beta, current, allowedNode);
 	}
 
-	auto phTerm = pheremoneTerm(pheremones, current, proposed);
-	auto distTerm = distanceTerm(graph, current, proposed);
+	auto phTerm = pheremoneTerm(pheremones, params.Alpha, current, proposed);
+	auto distTerm = distanceTerm(graph, params.Beta, current, proposed);
 
 	return (phTerm * distTerm) / normalisation;
 }
