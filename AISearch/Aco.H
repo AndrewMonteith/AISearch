@@ -7,11 +7,14 @@
 typedef double Pheremone;
 
 // Paramters used for the simulation
-const Pheremone EvaporationFactor = 0.6;
-// const Pheremone alpha = 3; // , beta = 6; Change by changing how the numbers are multiplied in pheremoneTerm and distanceTerm functions
-const Pheremone Q = 15;
-const Pheremone DefualtPheremone = 0.5;
-const int NumberOfIterations = 50;
+struct Parameters {
+	Pheremone EvaporationFactor;
+	int Alpha;
+	int Beta;
+	Pheremone Q;
+	Pheremone DefaultPheremone;
+	int NumberOfIterations;
+};
 
 class SquareMatrix {
 	// Matrix maintains the symmetric property.
@@ -51,9 +54,8 @@ private:
 
 class Ant {
 public:
-	Ant(Graph* g,  int id);
-	Ant();
-
+	Ant(Graph* g,  Parameters& params, int id);
+	
 	void reset();
 	void walk(SquareMatrix& pheremones);
 	bool walkedEdge(int c1, int c2);
@@ -74,9 +76,10 @@ private:
 	std::vector<int> tour;
 	std::set<int> visited; // used for quick lookup time
 
-	int numOfVisitedCities;
-
+	int numOfVisitedCities; 
 	int id; // used for precomputing uniquely identifying any precomputed vals
+
+	Parameters& params;
 
 	Graph* graph;
 
@@ -89,8 +92,9 @@ class ACO : public TourSolver {
 public:
 	std::vector<int> solve(Graph* graph);
 
-	ACO(int numberOfAnts)
-		: NumberOfAnts(numberOfAnts) {}
+	ACO(int numberOfAnts, Parameters params)
+		: NumberOfAnts(numberOfAnts), params(params) {}
 private:
 	int NumberOfAnts;
+	Parameters params;
 };

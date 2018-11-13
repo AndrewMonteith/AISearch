@@ -1,6 +1,7 @@
 #include "Aco.H"
 
-Ant::Ant(Graph* g, int id) 
+Ant::Ant(Graph* g, Parameters& parmams, int id) 
+	: params(params)
 {
 	this->id = id;
 	this->graph = g;
@@ -165,6 +166,3 @@ void Ant::reset() {
 	tour[tour.size() - 1] = -1;
 	visited.clear();
 }
-
-Ant::Ant()
-	: graph(nullptr) {}

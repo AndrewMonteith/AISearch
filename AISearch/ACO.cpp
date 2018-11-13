@@ -1,20 +1,20 @@
 #include "Aco.H"
 
-std::vector<Ant> createAnts(int number, Graph* g) {
+std::vector<Ant> createAnts(int number, Parameters& params, Graph* g) {
 	number = std::max(0, std::min(number, 200));
 
 	std::vector<Ant> ants;
 	ants.reserve(number);
 
 	for (auto i = 0; i < number; i++) {
-		ants.emplace_back(g, i);
+		ants.emplace_back(g, params, i);
 	}
 
 	return ants;
 }
 
-SquareMatrix createPheremoneMatrix(Graph* g) {
-	SquareMatrix pheremones(g->getNumberOfCities(), DefualtPheremone);
+SquareMatrix createPheremoneMatrix(Graph* g, Pheremone defaultPheremone) {
+	SquareMatrix pheremones(g->getNumberOfCities(), defaultPheremone);
 
 	for (auto i = 0; i < g->getNumberOfCities(); i++)
 		pheremones.set(i, i, 0);
@@ -34,15 +34,15 @@ void resetAnts(std::vector<Ant>& ants) {
 	}
 }
 
-void updatePheremones(Graph* g, SquareMatrix& pheremones, std::vector<Ant>& ants) {
+void updatePheremones(Graph* g, SquareMatrix& pheremones, Parameters& params, std::vector<Ant>& ants) {
 	std::vector<Pheremone> pheremoneUpdates(ants.size());
 	
 	for (Ant& ant : ants) {
-		pheremoneUpdates[ant.getId()] = Q / g->getCostOfTour(*ant.getTour());
+		pheremoneUpdates[ant.getId()] = params.Q / g->getCostOfTour(*ant.getTour());
 	}
 
 	for (auto& d : pheremones.rawBuffer()) {
-		d *= EvaporationFactor;
+		d *= params.EvaporationFactor;
 	}
 
 	for (Ant& ant : ants) {
@@ -62,7 +62,7 @@ std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix&
 	walkAnts(ants, pheremones);
 
 	std::vector<int>* bestTour = ants[0].getTour();
-	int bestLength = g->getCostOfTour(*ants[0].getTour()); // ants[0].getTourLength();
+	int bestLength = g->getCostOfTour(*ants[0].getTour()); 
 
 	for (auto& ant : ants) {
 		auto newLength = g->getCostOfTour(*ant.getTour());
@@ -77,17 +77,14 @@ std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix&
 
 
 std::vector<int> ACO::solve(Graph* g) {
-	auto ants = createAnts(NumberOfAnts, g);
+	auto ants = createAnts(NumberOfAnts, params, g);
 
-	auto pheremoneMatrix = createPheremoneMatrix(g);
-
-	Timer t;
-
-	for (auto i = 0; i < NumberOfIterations; i++) {
-		t.reset();
+	auto pheremoneMatrix = createPheremoneMatrix(g, params.DefaultPheremone);
+			
+	for (auto i = 0; i < params.NumberOfIterations; i++) {
 		resetAnts(ants);
 		walkAnts(ants, pheremoneMatrix);
-		updatePheremones(g, pheremoneMatrix, ants);
+		updatePheremones(g, pheremoneMatrix, params, ants);
 	}
 
 	return recoverSolution(g, ants, pheremoneMatrix);
