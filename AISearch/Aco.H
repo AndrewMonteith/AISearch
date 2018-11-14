@@ -1,10 +1,13 @@
 #pragma once
 
 #include "TourSolver.h"
+#include "Utils.hpp"
 
 #include <set>
 
 typedef double Pheremone;
+typedef SquareMatrix<Pheremone> PheremoneMatrix;
+
 
 // Paramters used for the simulation
 struct Parameters {
@@ -16,48 +19,12 @@ struct Parameters {
 	int NumberOfIterations;
 };
 
-class SquareMatrix {
-	// Matrix maintains the symmetric property.
-public:
-	SquareMatrix(int dimension, Pheremone defaultValue = 0)
-	{
-		this->dimension = dimension;
-		buffer = std::vector<Pheremone>(dimension*dimension, defaultValue);
-	}
-	
-	Pheremone get(int x, int y) {
-		return buffer[flatten(x, y)];
-	}
-
-	void set(int x, int y, Pheremone value) {
-		buffer[flatten(x, y)] = value;
-		buffer[flatten(y, x)] = value;
-	}
-
-	inline int flatten(int x, int y) {
-		return y*dimension + x;
-	}
-
-	std::vector<Pheremone>& rawBuffer() {
-		return buffer;
-	}
-
-	void update(int x, int y, Pheremone update) {
-		buffer[flatten(x, y)] += update;
-		buffer[flatten(y, x)] += update;
-	}
-
-private:
-	int dimension;
-	std::vector<Pheremone> buffer;
-};
-
 class Ant {
 public:
-	Ant(Graph* g,  Parameters& params, int id);
+	Ant(Graph* g, Parameters params, int id);
 	
 	void reset();
-	void walk(SquareMatrix& pheremones);
+	void walk(PheremoneMatrix& pheremones);
 	bool walkedEdge(int c1, int c2);
 
 	std::vector<int>* getTour();
@@ -68,10 +35,10 @@ private:
 	int getCurrentNode();
 	void visit(int city);
 
-	int chooseNeighbour(SquareMatrix& pheremones);
-	int cityWithLargestPheremone(SquareMatrix& pheremones);
-	Pheremone computeVisitProbability(SquareMatrix& pheremones, std::vector<int>& allowed, int city);
-	std::vector<int> getNeighbours(SquareMatrix& pheremones, int node);
+	int chooseNeighbour(PheremoneMatrix& pheremones);
+	int cityWithLargestPheremone(PheremoneMatrix& pheremones);
+	Pheremone computeVisitProbability(PheremoneMatrix& pheremones, std::vector<int>& allowed, int city);
+	std::vector<int> getNeighbours(PheremoneMatrix& pheremones, int node);
 
 	std::vector<int> tour;
 	std::set<int> visited; // used for quick lookup time
@@ -79,7 +46,7 @@ private:
 	int numOfVisitedCities; 
 	int id; // used for precomputing uniquely identifying any precomputed vals
 
-	Parameters& params;
+	Parameters params;
 
 	Graph* graph;
 

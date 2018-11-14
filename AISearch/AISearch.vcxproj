@@ -176,6 +176,7 @@
     <ClInclude Include="stdinc.h" />
     <ClInclude Include="Graph.h" />
     <ClInclude Include="TourSolver.h" />
+    <ClInclude Include="Utils.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

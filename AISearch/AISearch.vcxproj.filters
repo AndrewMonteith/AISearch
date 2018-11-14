@@ -53,5 +53,8 @@
     <ClInclude Include="Annealing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Utils.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

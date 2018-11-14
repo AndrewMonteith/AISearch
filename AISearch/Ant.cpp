@@ -1,10 +1,10 @@
 #include "Aco.H"
 
-Ant::Ant(Graph* g, Parameters& parmams, int id) 
-	: params(params)
+Ant::Ant(Graph* g, Parameters params, int id) 
 {
 	this->id = id;
 	this->graph = g;
+	this->params = params;
 	
 	tour = std::vector<int>(g->getNumberOfCities());
 	std::fill(tour.begin(), tour.end(), -1);
@@ -19,7 +19,7 @@ Ant::Ant(Graph* g, Parameters& parmams, int id)
 	dis = std::uniform_real_distribution<>(0.0, 1.0);
 }
 
-void Ant::walk(SquareMatrix& pheremones) {
+void Ant::walk(PheremoneMatrix& pheremones) {
 	// Generate Random Start Tour.
 	auto rndTourStart = std::uniform_int_distribution<>(0, graph->getNumberOfCities()-1);
 	visit(rndTourStart(gen));
@@ -29,7 +29,7 @@ void Ant::walk(SquareMatrix& pheremones) {
 	}
 }
 
-int Ant::chooseNeighbour(SquareMatrix& pheremones) {
+int Ant::chooseNeighbour(PheremoneMatrix& pheremones) {
 	float q = dis(gen);
 
 	if (q <= 0.3) {
@@ -48,11 +48,7 @@ int Ant::chooseNeighbour(SquareMatrix& pheremones) {
 		}
 	}
 
-
-
 	return cityWithLargestPheremone(pheremones);
-
-	// throw std::exception("failed to find neighbour");
 }
 
 bool Ant::walkedEdge(int c1, int c2) {
@@ -77,35 +73,19 @@ int Ant::getId() {
 	return id;
 }
 
-Pheremone ipow(Pheremone base, int exp)
-{
-	Pheremone result = 1;
-	for (;;)
-	{
-		if (exp & 1)
-			result *= base;
-		exp >>= 1;
-		if (!exp)
-			break;
-		base *= base;
-	}
-
-	return result;
-}
-
-inline Pheremone pheremoneTerm(SquareMatrix& pheremones, int alpha, int c1, int c2) {
+inline Pheremone pheremoneTerm(PheremoneMatrix& pheremones, int alpha, int c1, int c2) {
 	auto pher = pheremones.get(c1, c2);
 
-	return ipow(pher, alpha);
+	return fastPow(pher, alpha);//pher * pher*pher; //ipow(pher, alpha);
 }
 
 inline Pheremone distanceTerm(Graph* g, int beta, int c1, int c2) {
 	auto weightTerm = static_cast<Pheremone>(1) / g->getWeight(c1, c2);
 
-	return ipow(weightTerm, beta);
+	return fastPow(weightTerm, beta);// weightTerm * weightTerm*weightTerm*weightTerm*weightTerm*weightTerm; // ipow(weightTerm, beta);
 }
 
-Pheremone Ant::computeVisitProbability(SquareMatrix& pheremones, std::vector<int>& allowed, int proposed) {
+Pheremone Ant::computeVisitProbability(PheremoneMatrix& pheremones, std::vector<int>& allowed, int proposed) {
 	Pheremone normalisation = 0;
 	auto current = getCurrentNode();
 
@@ -121,7 +101,7 @@ Pheremone Ant::computeVisitProbability(SquareMatrix& pheremones, std::vector<int
 	return (phTerm * distTerm) / normalisation;
 }
 
-std::vector<int> Ant::getNeighbours(SquareMatrix& pheremones, int node) {
+std::vector<int> Ant::getNeighbours(PheremoneMatrix& pheremones, int node) {
 	std::vector<int> neighbours;
 	auto currentCity = getCurrentNode();
 
@@ -134,7 +114,7 @@ std::vector<int> Ant::getNeighbours(SquareMatrix& pheremones, int node) {
 	return neighbours;
 }
 
-int Ant::cityWithLargestPheremone(SquareMatrix& pheremones) {
+int Ant::cityWithLargestPheremone(PheremoneMatrix& pheremones) {
 	int bestCity = -1;
 	Pheremone largestPheremone = -1;
 

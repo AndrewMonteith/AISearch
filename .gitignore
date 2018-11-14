@@ -259,3 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/AISearch/tourAISearchfile180.txt
+/AISearch/tourAISearchfile175.txt
+/AISearch/tourAISearchfile058.txt
+/AISearch/tourAISearchfile042.txt
+/AISearch/tourAISearchfile026.txt
+/AISearch/tourAISearchfile021.txt
+/AISearch/tourAISearchfile017.txt
+/AISearch/tourAISearchfile012.txt

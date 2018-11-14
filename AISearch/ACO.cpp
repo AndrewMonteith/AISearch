@@ -1,8 +1,8 @@
 #include "Aco.H"
-
+#include <iostream>
 std::vector<Ant> createAnts(int number, Parameters& params, Graph* g) {
-	number = std::max(0, std::min(number, 200));
-
+	// number = std::max(0, std::min(number, 200));
+	std::cout << "Number:" << number << std::endl;
 	std::vector<Ant> ants;
 	ants.reserve(number);
 
@@ -13,8 +13,8 @@ std::vector<Ant> createAnts(int number, Parameters& params, Graph* g) {
 	return ants;
 }
 
-SquareMatrix createPheremoneMatrix(Graph* g, Pheremone defaultPheremone) {
-	SquareMatrix pheremones(g->getNumberOfCities(), defaultPheremone);
+PheremoneMatrix createPheremoneMatrix(Graph* g, Pheremone defaultPheremone) {
+	PheremoneMatrix pheremones(g->getNumberOfCities(), defaultPheremone);
 
 	for (auto i = 0; i < g->getNumberOfCities(); i++)
 		pheremones.set(i, i, 0);
@@ -22,7 +22,7 @@ SquareMatrix createPheremoneMatrix(Graph* g, Pheremone defaultPheremone) {
 	return pheremones;
 }
 
-void walkAnts(std::vector<Ant>& ants, SquareMatrix& matrix) {
+void walkAnts(std::vector<Ant>& ants, PheremoneMatrix& matrix) {
 	for (auto& ant : ants) {
 		ant.walk(matrix);
 	}
@@ -34,7 +34,7 @@ void resetAnts(std::vector<Ant>& ants) {
 	}
 }
 
-void updatePheremones(Graph* g, SquareMatrix& pheremones, Parameters& params, std::vector<Ant>& ants) {
+void updatePheremones(Graph* g, PheremoneMatrix& pheremones, Parameters& params, std::vector<Ant>& ants) {
 	std::vector<Pheremone> pheremoneUpdates(ants.size());
 	
 	for (Ant& ant : ants) {
@@ -57,7 +57,7 @@ void updatePheremones(Graph* g, SquareMatrix& pheremones, Parameters& params, st
 	}
 }
 
-std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix& pheremones) {
+std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, PheremoneMatrix& pheremones) {
 	resetAnts(ants);
 	walkAnts(ants, pheremones);
 
@@ -75,16 +75,20 @@ std::vector<int> recoverSolution(Graph* g, std::vector<Ant>& ants, SquareMatrix&
 	return *bestTour;
 }
 
+#include <iostream>
 
 std::vector<int> ACO::solve(Graph* g) {
 	auto ants = createAnts(NumberOfAnts, params, g);
 
 	auto pheremoneMatrix = createPheremoneMatrix(g, params.DefaultPheremone);
-			
+	
+	Timer t;
 	for (auto i = 0; i < params.NumberOfIterations; i++) {
+		t.reset();
 		resetAnts(ants);
 		walkAnts(ants, pheremoneMatrix);
 		updatePheremones(g, pheremoneMatrix, params, ants);
+		std::cout << "Did Iteration " << i << " in " << t.elapsed() << " seconds" << std::endl;
 	}
 
 	return recoverSolution(g, ants, pheremoneMatrix);
