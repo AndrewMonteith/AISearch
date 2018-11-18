@@ -1,0 +1,39 @@
+Mon 11/12/18  06:11:24 PM
+
+directory: dssw52 ...
+TourfileA...
+NEWAISearchfile012.txt: no tour-file present
+NEWAISearchfile017.txt: no tour-file present
+NEWAISearchfile021.txt: no tour-file present
+NEWAISearchfile026.txt: no tour-file present
+NEWAISearchfile042.txt: no tour-file present
+NEWAISearchfile048.txt: no tour-file present
+NEWAISearchfile058.txt: no tour-file present
+NEWAISearchfile175.txt: no tour-file present
+NEWAISearchfile180.txt: good (length of tour is 1950)
+NEWAISearchfile535.txt: no tour-file present
+TourfileB...
+NEWAISearchfile012.txt: no tour-file present
+NEWAISearchfile017.txt: no tour-file present
+NEWAISearchfile021.txt: no tour-file present
+NEWAISearchfile026.txt: no tour-file present
+NEWAISearchfile042.txt: no tour-file present
+NEWAISearchfile048.txt: no tour-file present
+NEWAISearchfile058.txt: no tour-file present
+NEWAISearchfile175.txt: no tour-file present
+NEWAISearchfile180.txt: no tour-file present
+NEWAISearchfile535.txt: no tour-file present
+
+Best tours:
+
+NEWAISearchfile012.txt: there is no best tour!
+NEWAISearchfile017.txt: there is no best tour!
+NEWAISearchfile021.txt: there is no best tour!
+NEWAISearchfile026.txt: there is no best tour!
+NEWAISearchfile042.txt: there is no best tour!
+NEWAISearchfile048.txt: there is no best tour!
+NEWAISearchfile058.txt: there is no best tour!
+NEWAISearchfile175.txt: there is no best tour!
+NEWAISearchfile180.txt: best tour has length 1950
+NEWAISearchfile180.txt winners : dssw52
+NEWAISearchfile535.txt: there is no best tour!
