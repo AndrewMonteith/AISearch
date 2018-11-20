@@ -8,7 +8,9 @@
 typedef std::vector<int> Tour;
 typedef std::function<float(int cycle)> CoolingSchedule; // <return-temp>(cycle)
 
-CoolingSchedule createLinearCoolingSchedule(float startingTemp, float alpha);
+CoolingSchedule createExponentialMultiplicateCS(float startingTemp, float alpha);
+CoolingSchedule createQuadraticMultiplicativeCS(float startingTemp, float alpha);
+CoolingSchedule createGlobalOptimimumCS(float startingTemp);
 
 class SuccessorGenerator
 {
@@ -58,7 +60,7 @@ public:
 	void undo(Tour& s);
 	void acceptSuccessor(Tour& s);
 private:
-	Tour::iterator from, to; // 2 iterators that we reveresed inbetween
+	int from, to; // 2 iterators that we reveresed inbetween
 	std::uniform_int_distribution<> indiciesDis;
 	std::mt19937 rnd;
 };

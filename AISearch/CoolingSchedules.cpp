@@ -1,5 +1,7 @@
 #include "Annealing.h"
 
+// Good Source: http://what-when-how.com/artificial-intelligence/a-comparison-of-cooling-schedules-for-simulated-annealing-artificial-intelligence/
+
 // Works for any base.
 float ipow(float base, int exp)
 {
@@ -17,8 +19,22 @@ float ipow(float base, int exp)
 	return result;
 }
 
-CoolingSchedule createLinearCoolingSchedule(float startingTemperature, float alpha) {
+CoolingSchedule createExponentialMultiplicateCS(float startingTemperature, float alpha) {
 	return [=](int cycle) {
 		return startingTemperature * ipow(alpha, cycle);
+	};
+}
+
+CoolingSchedule createQuadraticMultiplicativeCS(float startingTemperature, float alpha) {
+	return [=](int cycle) {
+		return startingTemperature / static_cast<float>(1 + alpha * cycle*cycle);
+	};
+}
+
+
+
+CoolingSchedule createGlobalOptimimumCS(float startingTemperature) {
+	return [=](int cycle) {
+		return startingTemperature / std::log(1 + cycle);
 	};
 }

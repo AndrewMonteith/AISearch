@@ -26,6 +26,7 @@ inline double acceptanceProbability(int currentEnergy, int newEnergy, double tem
 	return exp(exponent); // Randomly Choose Successor
 }
 
+#include <iostream>
 std::vector<int> Annealing::solve(Graph* g) {
 	// Allocate 2 vectors to act as current and successor
 	Tour current = createInitalState(g->getNumberOfCities());
@@ -35,7 +36,7 @@ std::vector<int> Annealing::solve(Graph* g) {
 	int cycle = 0;
 	while (temperature > 0.01) { // magic value but tends to work.
 		successorGenerator->createSuccessor(next); // generate next successor
-
+	//	std::cout << temperature << std::endl;
 		auto acceptProbability = acceptanceProbability(g->getCostOfTour(current), g->getCostOfTour(next), temperature);
 
 		bool keepSuccessor = propabilityDis(rnd) < acceptProbability;
