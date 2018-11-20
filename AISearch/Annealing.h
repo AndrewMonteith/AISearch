@@ -1,8 +1,14 @@
 #pragma once
 
+#ifndef FOOBAR_H
+#define FOOBAR_H
 #include "TourSolver.h"
+#include "Utils.hpp"
 
 typedef std::vector<int> Tour;
+typedef std::function<float(int cycle)> CoolingSchedule; // <return-temp>(cycle)
+
+CoolingSchedule createLinearCoolingSchedule(float startingTemp, float alpha);
 
 class SuccessorGenerator
 {
@@ -18,22 +24,19 @@ public:
 	std::vector<int> solve(Graph* g);
 	void setSuccessorGenerator(SuccessorGenerator* sg);
 
-	Annealing(double alpha, double startingTemp);
+	Annealing(double startingTemperature, CoolingSchedule cs);
 	~Annealing();
 private:
-	// factor by which the temperature cools
-	double alpha; 
-	
-	// starting temperature for annealing process
 	double startingTemperature;
 
-	SuccessorGenerator* successorGenerator;
+	SuccessorGenerator* successorGenerator; // how we generate new states.
+	CoolingSchedule coolingSchedule;
+
 
 	// all the random stuff
 	std::mt19937 rnd;
 	std::uniform_real_distribution<> propabilityDis;
 };
-
 
 class Swapper : public SuccessorGenerator {
 public:
@@ -59,3 +62,4 @@ private:
 	std::uniform_int_distribution<> indiciesDis;
 	std::mt19937 rnd;
 };
+#endif

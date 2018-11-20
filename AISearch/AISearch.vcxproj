@@ -166,6 +166,7 @@
     <ClCompile Include="AISearch.cpp" />
     <ClCompile Include="Annealing.cpp" />
     <ClCompile Include="Ant.cpp" />
+    <ClCompile Include="CoolingSchedules.cpp" />
     <ClCompile Include="Graph.cpp" />
     <ClCompile Include="ReverseSubsection.cpp" />
     <ClCompile Include="Swapper.cpp" />

@@ -32,6 +32,7 @@ std::vector<int> Annealing::solve(Graph* g) {
 	Tour next = current; // Copy
 	
 	double temperature = startingTemperature; 
+	int cycle = 0;
 	while (temperature > 0.01) { // magic value but tends to work.
 		successorGenerator->createSuccessor(next); // generate next successor
 
@@ -46,7 +47,8 @@ std::vector<int> Annealing::solve(Graph* g) {
 			successorGenerator->undo(next);
 		}
 
-		temperature *= (1-alpha);
+		temperature = coolingSchedule(cycle);
+		cycle += 1;
 	}
 
 	return current;
@@ -58,8 +60,8 @@ void Annealing::setSuccessorGenerator(SuccessorGenerator* sg)
 }
 
 
-Annealing::Annealing(double alpha, double startingTemp)
-	:alpha(alpha), startingTemperature(startingTemp)
+Annealing::Annealing(double startingTemp, CoolingSchedule cs)
+	:coolingSchedule(cs), startingTemperature(startingTemp)
 {
 	std::random_device seed;
 
