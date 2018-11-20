@@ -1,5 +1,6 @@
 #include "Aco.H"
 
+
 Ant::Ant(Graph* g, Parameters params, int id) 
 {
 	this->id = id;
@@ -8,7 +9,7 @@ Ant::Ant(Graph* g, Parameters params, int id)
 	
 	tour = std::vector<int>(g->getNumberOfCities());
 	std::fill(tour.begin(), tour.end(), -1);
-	visited = std::set<int>();
+	visitedBits = std::bitset<1024>();
 
 	numOfVisitedCities = 0;
 
@@ -19,13 +20,16 @@ Ant::Ant(Graph* g, Parameters params, int id)
 	dis = std::uniform_real_distribution<>(0.0, 1.0);
 }
 
+
 void Ant::walk(PheremoneMatrix& pheremones) {
 	// Generate Random Start Tour.
 	auto rndTourStart = std::uniform_int_distribution<>(0, graph->getNumberOfCities()-1);
 	visit(rndTourStart(gen));
 
 	while (tour.back() == -1) {
-		visit(chooseNeighbour(pheremones));
+		auto neighbour = chooseNeighbour(pheremones);
+
+		visit(neighbour);
 	}
 }
 
@@ -76,13 +80,13 @@ int Ant::getId() {
 inline Pheremone pheremoneTerm(PheremoneMatrix& pheremones, int alpha, int c1, int c2) {
 	auto pher = pheremones.get(c1, c2);
 
-	return fastPow(pher, alpha);//pher * pher*pher; //ipow(pher, alpha);
+	return fastPow(pher, alpha);
 }
 
 inline Pheremone distanceTerm(Graph* g, int beta, int c1, int c2) {
 	auto weightTerm = static_cast<Pheremone>(1) / g->getWeight(c1, c2);
 
-	return fastPow(weightTerm, beta);// weightTerm * weightTerm*weightTerm*weightTerm*weightTerm*weightTerm; // ipow(weightTerm, beta);
+	return fastPow(weightTerm, beta);
 }
 
 Pheremone Ant::computeVisitProbability(PheremoneMatrix& pheremones, std::vector<int>& allowed, int proposed) {
@@ -92,7 +96,8 @@ Pheremone Ant::computeVisitProbability(PheremoneMatrix& pheremones, std::vector<
 	for (auto& allowedNode : allowed) {
 		if (allowedNode == proposed) continue;
 
-		normalisation += pheremoneTerm(pheremones, params.Alpha, current, allowedNode)*distanceTerm(graph, params.Beta, current, allowedNode);
+		normalisation += pheremoneTerm(pheremones, params.Alpha, current, allowedNode)
+							*distanceTerm(graph, params.Beta, current, allowedNode);
 	}
 
 	auto phTerm = pheremoneTerm(pheremones, params.Alpha, current, proposed);
@@ -101,12 +106,16 @@ Pheremone Ant::computeVisitProbability(PheremoneMatrix& pheremones, std::vector<
 	return (phTerm * distTerm) / normalisation;
 }
 
+inline bool Ant::hasVisited(int city) {
+	return visitedBits[city] == 1;
+}
+
 std::vector<int> Ant::getNeighbours(PheremoneMatrix& pheremones, int node) {
 	std::vector<int> neighbours;
 	auto currentCity = getCurrentNode();
 
 	for (auto city = 0; city < graph->getNumberOfCities(); city++) {
-		if (visited.find(city) == visited.end() && pheremones.get(currentCity, city) > 0.001) {
+		if (!hasVisited(city) && pheremones.get(currentCity, city) > 0.001) {
 			neighbours.emplace_back(city);
 		}
 	}
@@ -132,7 +141,7 @@ int Ant::cityWithLargestPheremone(PheremoneMatrix& pheremones) {
 	if (bestCity == -1) {
 		// Determinstically pick a city with no lower bound
 		for (auto city = 0; city < graph->getNumberOfCities(); city++) {
-			if (visited.find(city) == visited.end()) {
+			if (!hasVisited(city)) {
 				return city;
 			}
 		}
@@ -148,13 +157,13 @@ int Ant::getCurrentNode() {
 
 void Ant::visit(int city) {
 	tour[numOfVisitedCities] = city;
- 	visited.insert(city);
-	
+	visitedBits[city] = 1;
+
 	numOfVisitedCities++;
 }
 
 void Ant::reset() {
 	numOfVisitedCities = 0;
 	tour[tour.size() - 1] = -1;
-	visited.clear();
+	visitedBits = visitedBits &= 0; // reset all to 0
 }

@@ -4,8 +4,9 @@
 #include "Utils.hpp"
 
 #include <set>
+#include <bitset>
 
-typedef double Pheremone;
+typedef float Pheremone;
 typedef SquareMatrix<Pheremone> PheremoneMatrix;
 
 
@@ -19,6 +20,7 @@ struct Parameters {
 	int NumberOfIterations;
 };
 
+
 class Ant {
 public:
 	Ant(Graph* g, Parameters params, int id);
@@ -29,8 +31,6 @@ public:
 
 	std::vector<int>* getTour();
 	int getId();
-
-//	Ant();
 private:
 	int getCurrentNode();
 	void visit(int city);
@@ -39,9 +39,11 @@ private:
 	int cityWithLargestPheremone(PheremoneMatrix& pheremones);
 	Pheremone computeVisitProbability(PheremoneMatrix& pheremones, std::vector<int>& allowed, int city);
 	std::vector<int> getNeighbours(PheremoneMatrix& pheremones, int node);
+	inline bool hasVisited(int city);
+
 
 	std::vector<int> tour;
-	std::set<int> visited; // used for quick lookup time
+	std::bitset<1024> visitedBits;
 
 	int numOfVisitedCities; 
 	int id; // used for precomputing uniquely identifying any precomputed vals

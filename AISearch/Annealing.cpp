@@ -7,7 +7,7 @@ Tour createInitalState(int numberOfNodes) {
 
 	// Fill vector with numbers from 1 to number of cities.
 	for (auto i = 0; i < numberOfNodes; i++) {
-		numbers[i] = i+1;
+		numbers[i] = i;
 	}
 
 	std::random_shuffle(numbers.begin(), numbers.end());

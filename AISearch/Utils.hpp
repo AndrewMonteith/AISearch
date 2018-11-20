@@ -38,7 +38,7 @@ private:
 };
 
 
-inline double fastPow(double base, int exp) {
+inline float fastPow(float base, int exp) {
 	static const int highest_bit_set[] = {
 		0, 1, 2, 2, 3, 3, 3, 3,
 		4, 4, 4, 4, 4, 4, 4, 4,
@@ -74,7 +74,7 @@ inline double fastPow(double base, int exp) {
 		255, 255, 255, 255, 255, 255, 255, 255,
 	};
 
-	double result = 1;
+	float result = 1;
 
 	switch (highest_bit_set[exp]) {
 	case 255: // we use 255 as an overflow marker and return 0 on overflow/underflow
