@@ -26,18 +26,26 @@ inline double acceptanceProbability(int currentEnergy, int newEnergy, double tem
 	return exp(exponent); // Randomly Choose Successor
 }
 
-#include <iostream>
+inline float nonMonotonicCoolingSchedule(int optimallyFoundFitness, int currentFitness) {
+	return (1 + static_cast<float>(currentFitness - optimallyFoundFitness)/currentFitness);
+}
+
 std::vector<int> Annealing::solve(Graph* g) {
 	// Allocate 2 vectors to act as current and successor
 	Tour current = createInitalState(g->getNumberOfCities());
 	Tour next = current; // Copy
 	
-	double temperature = startingTemperature; 
+	double temperature = coolingSchedule(0);
 	int cycle = 0;
+
+	int bestFoundFitness = g->getCostOfTour(current); // used for non-monotonic cooling.
+
 	while (temperature > 0.01) { // magic value but tends to work.
 		successorGenerator->createSuccessor(next); // generate next successor
-	//	std::cout << temperature << std::endl;
-		auto acceptProbability = acceptanceProbability(g->getCostOfTour(current), g->getCostOfTour(next), temperature);
+	
+		auto newCost = g->getCostOfTour(next);
+
+		auto acceptProbability = acceptanceProbability(g->getCostOfTour(current), newCost, temperature);
 
 		bool keepSuccessor = propabilityDis(rnd) < acceptProbability;
 
@@ -47,9 +55,11 @@ std::vector<int> Annealing::solve(Graph* g) {
 		else {
 			successorGenerator->undo(next);
 		}
-
-		temperature = coolingSchedule(cycle);
 		cycle += 1;
+
+		temperature = coolingSchedule(cycle) * nonMonotonicCoolingSchedule(bestFoundFitness, newCost);
+		
+		bestFoundFitness = std::min(newCost, bestFoundFitness);
 	}
 
 	return current;
@@ -61,8 +71,8 @@ void Annealing::setSuccessorGenerator(SuccessorGenerator* sg)
 }
 
 
-Annealing::Annealing(double startingTemp, CoolingSchedule cs)
-	:coolingSchedule(cs), startingTemperature(startingTemp)
+Annealing::Annealing(CoolingSchedule cs)
+	: coolingSchedule(cs), successorGenerator(nullptr)
 {
 	std::random_device seed;
 

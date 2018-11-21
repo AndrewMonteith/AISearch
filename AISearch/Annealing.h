@@ -10,6 +10,7 @@ typedef std::function<float(int cycle)> CoolingSchedule; // <return-temp>(cycle)
 
 CoolingSchedule createExponentialMultiplicateCS(float startingTemp, float alpha);
 CoolingSchedule createQuadraticMultiplicativeCS(float startingTemp, float alpha);
+CoolingSchedule createLogarithmicMultiplicativeCS(float startingTemp, float alpha);
 CoolingSchedule createGlobalOptimimumCS(float startingTemp);
 
 class SuccessorGenerator
@@ -20,17 +21,15 @@ public:
 	virtual void undo(Tour& s) = 0; // Optimisation wise we need to make all successors transformablew
 };
 
-class Annealing // : public TourSolver
+class Annealing : public TourSolver
 {
 public:
 	std::vector<int> solve(Graph* g);
 	void setSuccessorGenerator(SuccessorGenerator* sg);
 
-	Annealing(double startingTemperature, CoolingSchedule cs);
+	Annealing(CoolingSchedule cs);
 	~Annealing();
 private:
-	double startingTemperature;
-
 	SuccessorGenerator* successorGenerator; // how we generate new states.
 	CoolingSchedule coolingSchedule;
 

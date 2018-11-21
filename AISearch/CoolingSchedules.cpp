@@ -31,7 +31,11 @@ CoolingSchedule createQuadraticMultiplicativeCS(float startingTemperature, float
 	};
 }
 
-
+CoolingSchedule createLogarithmicMultiplicativeCS(float startingTemperature, float alpha) {
+	return [=](int cycle) {
+		return startingTemperature / (1 + alpha * static_cast<float>(std::log(1 + cycle)));
+	};
+}
 
 CoolingSchedule createGlobalOptimimumCS(float startingTemperature) {
 	return [=](int cycle) {
