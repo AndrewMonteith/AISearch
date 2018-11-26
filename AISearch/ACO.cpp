@@ -39,6 +39,8 @@ void resetAnts(std::vector<Ant>& ants) {
 #include <iostream>
 
 void updatePheremonesRankBased(Graph* g, PheremoneMatrix& pheremones, Parameters& params, std::vector<Ant>& ants, int w = 30) {
+	w = std::max(static_cast<int>(ants.size() - 1), w);
+
 	std::vector<int> tourLengths(ants.size());
 	for (auto& ant : ants) {
 		tourLengths[ant.getId()] = g->getCostOfTour(*ant.getTour());
