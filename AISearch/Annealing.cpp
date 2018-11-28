@@ -31,35 +31,35 @@ inline float nonMonotonicCoolingSchedule(int optimallyFoundFitness, int currentF
 }
 
 std::vector<int> Annealing::solve(Graph* g) {
-	// Allocate 2 vectors to act as current and successor
 	Tour current = createInitalState(g->getNumberOfCities());
-	Tour next = current; // Copy
+	auto currentCost = g->getCostOfTour(current);
 	
-	double temperature = coolingSchedule(0);
+	float temperature = coolingSchedule(0);
 	int cycle = 0;
 
-	int bestFoundFitness = g->getCostOfTour(current); // used for non-monotonic cooling.
+	// int bestFoundFitness = g->getCostOfTour(current); // used for non-monotonic cooling.
 
 	while (temperature > 0.01) { // magic value but tends to work.
-		successorGenerator->createSuccessor(next); // generate next successor
+		successorGenerator->createSuccessor(current); // generate next successor
 	
-		auto newCost = g->getCostOfTour(next);
+		auto newCost = g->getCostOfTour(current);
 
-		auto acceptProbability = acceptanceProbability(g->getCostOfTour(current), newCost, temperature);
+		auto acceptProbability = acceptanceProbability(currentCost, newCost, temperature);
 
 		bool keepSuccessor = propabilityDis(rnd) < acceptProbability;
 
-		if (keepSuccessor) {
-			successorGenerator->acceptSuccessor(current); // perform same transition to current
+		if (!keepSuccessor) {
+			successorGenerator->undo(current);
 		}
 		else {
-			successorGenerator->undo(next);
+			currentCost = newCost;
 		}
+
 		cycle += 1;
 
-		temperature = coolingSchedule(cycle) * nonMonotonicCoolingSchedule(bestFoundFitness, newCost);
+		temperature = coolingSchedule(cycle); // *nonMonotonicCoolingSchedule(bestFoundFitness, newCost);
 		
-		bestFoundFitness = std::min(newCost, bestFoundFitness);
+		// bestFoundFitness = std::min(newCost, bestFoundFitness);
 	}
 
 	return current;

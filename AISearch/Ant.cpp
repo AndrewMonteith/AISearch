@@ -69,8 +69,8 @@ bool Ant::walkedEdge(int c1, int c2) {
 	return (tour[0] == c1 && tour[numOfCities-1] == c2) || (tour[0] == c2 && tour[numOfCities-1] == c1);
 }
 
-std::vector<int>* Ant::getTour() {
-	return &tour;
+std::vector<int>& Ant::getTour() {
+	return tour;
 }
 
 int Ant::getId() {

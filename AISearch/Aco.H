@@ -6,7 +6,7 @@
 #include <set>
 #include <bitset>
 
-typedef float Pheremone;
+typedef double Pheremone;
 typedef SquareMatrix<Pheremone> PheremoneMatrix;
 
 
@@ -29,7 +29,7 @@ public:
 	void walk(PheremoneMatrix& pheremones);
 	bool walkedEdge(int c1, int c2);
 
-	std::vector<int>* getTour();
+	std::vector<int>& getTour();
 	int getId();
 private:
 	int getCurrentNode();
